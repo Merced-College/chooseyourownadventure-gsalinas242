@@ -1,80 +1,54 @@
-#include <fstream>
-#include <sstream>
+#include <iostream>
 #include "LinkedList.h"
+#include "Room.h"
+#include "Ally.h"
 
-void introduction() {
-    cout << "Welcome to the Castle Adventure!\n";
-    cout << "You will navigate through various rooms in the castle, encountering challenges and making decisions that will determine your path.\n";
-    cout << "Choose your actions wisely. Let's start your journey!\n\n";
+using namespace std;
+
+// REQUIRED FUNCTION 1
+void showAlly(Ally a) {
+    a.display();
 }
 
-
-#include <fstream>
-#include <sstream>
-#include "LinkedList.h"
+// REQUIRED FUNCTION 2
+void levelUpAlly(Ally &a) {
+    a.levelUp();
+}
 
 int main() {
-    LinkedList castleRooms;
-    ifstream file("rooms.csv");
-    string line;
+    LinkedList list;
 
-    // Reading rooms from the CSV file
-    if (file.is_open()) {
-        while (getline(file, line)) {
-            stringstream ss(line);
-            string name, description, actionsStr, item;
-            vector<string> actions;
+    // Rooms
+    Room r1("Forest", "A dark forest with tall trees.");
+    Room r2("Cave", "A cold cave with echoes.");
+    Room r3("Castle", "An old abandoned castle.");
 
-            getline(ss, name, ',');
-            getline(ss, description, ',');
-            getline(ss, actionsStr, ',');
-            getline(ss, item);
+    list.addRoom(r1);
+    list.addRoom(r2);
+    list.addRoom(r3);
 
-            stringstream actionStream(actionsStr);
-            string action;
-            while (getline(actionStream, action, ';')) {
-                actions.push_back(action);
-            }
+    // Display rooms
+    cout << "Game Rooms:" << endl;
+    list.displayRooms();
 
-            Room newRoom(name, description, actions, item);
-            castleRooms.addRoom(newRoom);
-        }
-        file.close();
-    } else {
-        cout << "Unable to open file" << endl;
-        return 1;
-    }
+    cout << endl;
 
-    // Introduction
-    introduction();
+    // NEW OBJECT (requirement)
+    Ally ally("Knight", "Warrior", 1);
 
-    // Interaction with rooms
-    auto current = castleRooms.getHead();
-    while (current != nullptr) {
-        cout << current->room.toString() << endl;
+    // FEATURE 1: show ally
+    cout << "You meet an ally!" << endl;
+    showAlly(ally);
 
-        // Display actions for the current room
-        int actionNum = 1;
-        for (const auto& action : current->room.getActions()) {
-            cout << actionNum++ << ". " << action << endl;
-        }
+    cout << endl;
 
-        // User chooses an action
-        int choice;
-        cout << "Choose an action (1-" << current->room.getActions().size() << "): ";
-        cin >> choice;
+    // FEATURE 2: level system
+    cout << "The ally helps you in battle..." << endl;
+    levelUpAlly(ally);
 
-        // Process choice
-        if (choice < 1 || choice > current->room.getActions().size()) {
-            cout << "Invalid choice. Try again.\n";
-        } else {
-            cout << "You chose: " << current->room.getActions()[choice - 1] << endl;
-            if (choice == current->room.getActions().size()) {  // Assumes 'Leave the room' is the last action
-                current = current->next;  // Move to next room
-            }
-        }
-    }
+    cout << endl;
 
-    cout << "You have reached the end of your adventure!\n";
+    showAlly(ally);
+
     return 0;
 }
